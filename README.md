@@ -54,4 +54,5 @@ write(1, "\n", 1)                       = 1
 
 * Almost untested (LD_PRELOAD trick seems to fail to work with the program I indended to test this with, so I sort of abandoned the project)
 * Not everything is interpeptable with LD_PRELOAD. `strace`-based or other closer-to-kernel solution would likely to work more reliably.
+* Probably GNU/Linux-only.
 * `readv`/`writev` interception code temporarily mutates iov which is supposed to be const.
