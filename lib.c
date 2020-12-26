@@ -5,11 +5,15 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <sys/uio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 static ssize_t (*orig_read)(int fd, void* buf, size_t count) = NULL;
 static ssize_t (*orig_write)(int fd, const void* buf, size_t count) = NULL;
 static ssize_t (*orig_recv)(int fd, void* buf, size_t count, int flags) = NULL;
 static ssize_t (*orig_send)(int fd, const void* buf, size_t count, int flags) = NULL;
+static ssize_t (*orig_recvfrom)(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen) = NULL;
+static ssize_t (*orig_sendto)(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *src_addr, socklen_t addrlen) = NULL;
 static ssize_t (*orig_readv)(int fd, const struct iovec *iov, int iovcnt) = NULL;
 static ssize_t (*orig_writev)(int fd, const struct iovec *iov, int iovcnt) = NULL;
 
@@ -52,6 +56,9 @@ static void mangle_simple(size_t *count) {
     uint32_t r = xorshift32(&rnd);
     if (!*count) {
         return;
+    }
+    if (r < 0x80000000) {
+        r &= 0xF;
     }
     *count = r % *count;
     if(!*count) {
@@ -117,6 +124,25 @@ ssize_t send(int fd, const void* buf, size_t count, int flags) {
     if (flags & TOUCH_WRITES) mangle_simple(&count);
     return orig_send(fd, buf, count, flags);
 }
+
+ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen) {
+    if(!orig_recvfrom) {
+        orig_recvfrom = dlsym(RTLD_NEXT, "recvfrom");
+    }
+    initialize();
+    if (flags & TOUCH_READS) mangle_simple(&len);
+    return orig_recvfrom(sockfd, buf, len, flags, src_addr, addrlen);
+}
+ssize_t sendto(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *addr, socklen_t addrlen) {
+    if(!orig_sendto) {
+        orig_sendto = dlsym(RTLD_NEXT, "sendto");
+    }
+    initialize();
+    if (flags & TOUCH_WRITES) mangle_simple(&len);
+    return orig_sendto(sockfd, buf, len, flags, addr, addrlen);
+}
+
+
 ssize_t readv (int fd, const struct iovec *iov, int iovcnt) {
     if(!orig_readv) {
         orig_readv = dlsym(RTLD_NEXT, "readv");
