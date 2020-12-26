@@ -34,7 +34,7 @@ write(1, "\n", 1)                       = 1
 
 ## Features
 
-* Interpecting functions
+* Intercepting functions
     * read
     * write
     * send
