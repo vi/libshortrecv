@@ -44,7 +44,7 @@ write(1, "\n", 1)                       = 1
     * readv
     * writev
 * Environment variable configuration
-    * `LIBSHORTRECV_SEED` - set randome number seed. Use value `0` to force 1-byte reads or writes every time.
+    * `LIBSHORTRECV_SEED` - set random number seed. Use value `0` to force 1-byte reads or writes every time.
     * `LIBSHORTRECV_NOREAD` - disable intercepting of reading functions
     * `LIBSHORTRECV_NOWRITE` - disable intercepting of writing functions
     * `LIBSHORTRECV_NOV` - disable intercepting of `readv`/`writev` (which is untested at all)
