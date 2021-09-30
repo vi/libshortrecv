@@ -41,13 +41,13 @@ static void initialize() {
         if (getenv("LIBSHORTRECV_SEED")) {
             rnd = atoi(getenv("LIBSHORTRECV_SEED"));
         }
-        if (!getenv("LIBSHORTRECV_NOREAD") || atoi(getenv("LIBSHORTRECV_NOREAD"))) {
+        if (!getenv("LIBSHORTRECV_NOREAD") || !atoi(getenv("LIBSHORTRECV_NOREAD"))) {
             flags |= TOUCH_READS;
         }
-        if (!getenv("LIBSHORTRECV_NOWRITE") || atoi(getenv("LIBSHORTRECV_NOWRITE"))) {
+        if (!getenv("LIBSHORTRECV_NOWRITE") || !atoi(getenv("LIBSHORTRECV_NOWRITE"))) {
             flags |= TOUCH_WRITES;
         }
-        if (!getenv("LIBSHORTRECV_NOV") || atoi(getenv("LIBSHORTRECV_NOV"))) {
+        if (!getenv("LIBSHORTRECV_NOV") || !atoi(getenv("LIBSHORTRECV_NOV"))) {
             flags |= TOUCH_V;
         }
     }
